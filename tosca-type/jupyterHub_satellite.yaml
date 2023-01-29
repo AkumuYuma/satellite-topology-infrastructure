@@ -104,7 +104,7 @@ node_types:
     interfaces:
       Standard:
         start:
-          implementation: # TODO Mettere url dell'artifact di questo repository
+          implementation: https://raw.githubusercontent.com/AkumuYuma/satellite-topology-infrastructure/main/artifacts/execute_role_and_download_data.yaml
           inputs:
             # input playbook 
             role_name: { get_property: [ SELF, role_name ] } 
