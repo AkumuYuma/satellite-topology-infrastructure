@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - role: "{{ role_name }}"
+  
+  # TODO: Aggiornare con task di download_data.yaml quando avrai debuggato!
+- tasks: 
+  - name: Create data directory
+      ansible.builtin.file:
+        path: /data
+        state: directory
+        mode: '0775'
+  
+  - name: Create downloader directory 
+      ansible.builtin.file:
+        path: /downloader
+        state: directory
+        mode: '0775'
+    
+  -name: Clone downloader repository
+     git:
+       repo: https://github.com/AkumuYuma/eodag-data-downloader.git
+       dest: /downloader
+       clone: yes
+       update: yes
+  
+  - name: Install requirements for data download
+    ansible.builtin.pip:
+      requirements: /downloader/requirements.txt
+  
+  - name: Download data
+    ansible.builtin.script: /downloader/downloader.py {{ downloading_input }}
+    args:
+      executable: python3
+
+  
+      

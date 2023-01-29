@@ -1,0 +1,134 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+imports:
+  - indigo_basic_types: # TODO: Mettere i basic_types di questo repository (per avere i datatype per il download)
+metadata:
+  template_author: Emanuele-Fiorente
+  template_name: jupyterHub_satellite
+  template_version: 1.0.0
+
+
+artifact_types:
+
+  tosca.artifacts.Implementation.YAML:
+    derived_from: tosca.artifacts.Implementation
+    description: YAML Ansible recipe artifact
+    mime_type: text/yaml
+    file_ext: [ yaml, yml ]
+
+  tosca.artifacts.AnsibleGalaxy.role:
+    derived_from: tosca.artifacts.Root
+    description: Ansible Galaxy role to be deployed in the target node
+
+  tosca.artifacts.Deployment.Image.Container.Docker:
+    derived_from: tosca.artifacts.Deployment.Image
+    description: Docker Container Image
+
+node_types:
+
+  tosca.nodes.DODAS.single-node-jupyterhub-downloaded-data:
+    derived_from: tosca.nodes.SoftwareComponent
+    properties:
+
+      install_docker:
+        type: boolean
+        default: true
+      install_docker_compose:
+        type: boolean
+        default: true
+
+      monitoring:
+        type: boolean
+        default: true
+      monitoring_image:
+        type: string
+        default: dodasts/monitoring-grafana:v1.0.7-monitoring
+
+      iam_url:
+        type: string
+        default: "https://iam.recas.ba.infn.it/"
+
+      # The uuid of the iam user to be administrator of the jupyterHubService. 
+      iam_subject: # Inserire da template
+        type: string
+        required: yes
+      # The iam group authorized to be users of the service 
+      iam_groups:
+        type: string
+        default: "CLOSE"
+      iam_admin_groups:
+        type: string
+        default: "CLOSE"
+
+      prepare_jupyter:
+        type: boolean
+        default: true
+      run_jupyter:
+        type: boolean
+        default: true
+      jupyter_hub_image: # Docker image for jupyterHub Docker container 
+        type: string
+        default: "dodasts/snj-base-jhub:v1.0.2p1-snj"
+      
+      jupyter_images: # Docker image for jupyterLab Docker container, this needs to be modified to avoid persistency  
+        type: string
+        default: "akumuyuma/satellite-base-download-mounted:latest"
+      jupyter_use_gpu:
+        type: boolean
+        default: false
+
+      jupyter_host_mount_dir: 
+        type: string
+        default: ""
+
+      server_ip:
+        type: string
+        default: ""
+
+      role_name:
+        type: string
+        required: false
+        default: ansible-role-jupyterhub-env
+
+      downloading_input:
+        type: list 
+        required: true 
+        default: [] 
+        entry_schema: 
+          type: tosca.datatypes.downloader.downloading_input
+
+    artifacts:
+      ml_role:
+        file: git+https://github.com/DODAS-TS/ansible-role-jupyterhub-env,v2.0.6
+        type: tosca.artifacts.AnsibleGalaxy.role
+    interfaces:
+      Standard:
+        start:
+          implementation: # TODO Mettere url dell'artifact di questo repository
+          inputs:
+            # input playbook 
+            role_name: { get_property: [ SELF, role_name ] } 
+            downloading_input: { get_property: [ SELF, downloading_input ] }
+
+            # Input del ruolo DODAS-TS/ansible-role-jupyterhub
+            install_docker: { get_property: [SELF, install_docker] }
+            install_docker_compose: { get_property: [SELF, install_docker_compose] }
+            monitoring: { get_property: [SELF, monitoring] }
+            grafana_image: { get_property: [SELF, monitoring_image] }
+            iam_url: { get_property: [SELF, iam_url] }
+            iam_subject: { get_property: [SELF, iam_subject] }
+            iam_groups: { get_property: [SELF, iam_groups] }
+            iam_admin_groups: { get_property: [SELF, iam_admin_groups] }
+            prepare_jupyter: { get_property: [SELF, prepare_jupyter] }
+            run_jupyter: { get_property: [SELF, run_jupyter] }
+            jupyter_hub_image: { get_property: [SELF, jupyter_hub_image] }
+            jupyter_images: { get_property: [SELF, jupyter_images] }
+            jupyter_use_gpu: { get_property: [SELF, jupyter_use_gpu] }
+            jupyter_post_start_cmd: ""
+            jupyter_host_mount_dir: { get_property: [SELF, jupyter_host_mount_dir] }
+            jupyterlab_collaborative: no # Testare se corretta sintassi
+            jupyterlab_collaborative_use_gpu: no # Tanto se jupyter_collaborative sta a no, queste due variabili dovrebbero essere ignorate
+            jupyterlab_collaborative_image: ""
+            cvmfs_repos: "" # Cambiando l'immagine docker non dovrebbe dare problemi
+            server_ip: { get_property: [SELF, server_ip] }
+
