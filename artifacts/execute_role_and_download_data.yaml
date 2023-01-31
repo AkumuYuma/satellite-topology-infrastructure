@@ -21,17 +21,18 @@
       clone: yes
       update: yes
   
-  - name: Download conda installer script
-    ansible.builtin.shell: 
-      cmd: "curl {{ conda_downloader }} > /downloader/conda_downloader_script.sh"
+  # - name: Download conda installer script
+  #   ansible.builtin.shell: 
+  #     cmd: "curl {{ conda_downloader }} > /downloader/conda_downloader_script.sh"
   
-  - name: Install and init miniconda
-    ansible.builtin.shell: 
-      cmd: bash /downloader/conda_downloader_script.sh
+  # - name: Install and init miniconda
+  #   ansible.builtin.shell: 
+  #     cmd: bash /downloader/conda_downloader_script.sh
   
   - name: Create Virtual environment
     ansible.builtin.shell: 
-      cmd: /miniconda/bin/conda create --prefix /downloader/venv -q -y python=3.10.9
+      # cmd: /miniconda/bin/conda create --prefix /downloader/venv -q -y python=3.10.9
+      cmd: /miniconda/conda.exe create --prefix /downloader/venv -q -y python=3.10.9
 
   - name: Install requirements 
     ansible.builtin.shell: 
