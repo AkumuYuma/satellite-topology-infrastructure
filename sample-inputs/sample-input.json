@@ -5,7 +5,7 @@
             "os_user_name": "efiorente"
         }
     ],
-    "iam_subject": "change-me", 
+    "iam_subject": "c1287ba5-97d1-463d-a9bb-2cc3a4eb2569", 
     "downloading_input":
     [
         {
@@ -29,8 +29,8 @@
                     "auth": {
                         "credentials":
                             {
-                                "ident": "change-me",
-                                "pass": "change-me"
+                                "ident": "e.fiorente@studenti.uniba.it",
+                                "pass": "TheiaPass1!"
                             }
                     }
                 },

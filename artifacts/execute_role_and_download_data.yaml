@@ -39,10 +39,12 @@
   #     msg: 
   #     - "Variabile: '{{ downloading_input[0] }}'"
   
+  # - name: Download data
+  #   ansible.builtin.script: /downloader/downloader.py "{{ downloading_input[0] }}"
+  #   args:
+  #     executable: python3
   - name: Download data
-    ansible.builtin.script: /downloader/downloader.py "{{ downloading_input[0] }}"
-    args:
-      executable: python3
+    ansible.builtin.command: python3 /downloader/downloader.py "{{ downloading_input[0] }}"
 
   - name: Moving image files from downloading folder to the final path 
     ansible.builtin.shell:
