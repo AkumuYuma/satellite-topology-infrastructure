@@ -21,9 +21,13 @@
       clone: yes
       update: yes
   
+  - name: Download conda installer script
+    ansible.builtin.shell: 
+      cmd: "curl {{ conda_downloader }} > /downloader/conda_downloader_script.sh"
+  
   - name: Install and init miniconda
     ansible.builtin.shell: 
-      cmd: "bash {{ conda_downloader }}"
+      cmd: bash /downloader/conda_downloader_script.sh
   
   - name: Create Virtual environment
     ansible.builtin.shell: 
@@ -56,11 +60,11 @@
   #   args:
   #     executable: python3
   - name: Download data
-    ansible.builtin.command: /downloader/venv/bin/python3 /downloader/repo/downloader.py "{{ downloading_input[0] }}"
+    ansible.builtin.command: /downloader/venv/bin/python3 /downloader/downloader.py "{{ downloading_input[0] }}"
 
   - name: Moving image files from downloading folder to the final path 
     ansible.builtin.shell:
-      cmd: mv "/downloader/repo/{{ downloading_input[0]["saving_settings"]["base_path"] }}" /jupyter-mounts/shared/
+      cmd: mv "/downloader/{{ downloading_input[0]["saving_settings"]["base_path"] }}" /jupyter-mounts/shared/
       chdir: /
 
   
