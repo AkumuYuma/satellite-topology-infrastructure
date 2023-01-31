@@ -10,16 +10,27 @@
   tasks: 
   - name: Create downloader directory 
     ansible.builtin.file:
-      path: /downloader
+      path: /downloader/repo
       state: directory
       mode: '0775'
     
   - name: Clone downloader repository
     git:
       repo: https://github.com/AkumuYuma/eodag-data-downloader.git
-      dest: /downloader
+      dest: /downloader/repo
       clone: yes
       update: yes
+  
+  - name: Install and init miniconda
+    ansible.builtin.shell: 
+      cmd: "bash {{ conda_downloader }}"
+  
+  - name: Install virtualenv via pip
+    ansible.builtin.pip: 
+      name: virtualenv
+  
+  - name: Create Virtualenv for downloader 
+    ansible.builitin.shell: 
   
   # - name: Install requirements for data download
   #   ansible.builtin.pip:
@@ -48,7 +59,7 @@
 
   - name: Moving image files from downloading folder to the final path 
     ansible.builtin.shell:
-      cmd: mv "/downloader/{{ downloading_input[0]["saving_settings"]["base_path"] }}" /shared/
+      cmd: mv "/downloader/{{ downloading_input[0]["saving_settings"]["base_path"] }}" /jupyter-mounts/shared/
       chdir: /
 
   
