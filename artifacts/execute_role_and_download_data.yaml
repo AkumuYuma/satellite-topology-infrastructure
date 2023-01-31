@@ -25,25 +25,26 @@
     ansible.builtin.shell: 
       cmd: "bash {{ conda_downloader }}"
   
-  - name: Install virtualenv via pip
-    ansible.builtin.pip: 
-      name: virtualenv
-  
-  - name: Create Virtualenv for downloader 
-    ansible.builitin.shell: 
+  - name: Create Virtual environment
+    ansible.builtin.shell: 
+      cmd: /miniconda/bin/conda create --prefix /downloader/venv -q -y python=3.10.9
+
+  - name: Install requirements 
+    ansible.builtin.shell: 
+      cmd: /downloader/venv/bin/pip install -r /downloader/repo/requirements.txt 
   
   # - name: Install requirements for data download
   #   ansible.builtin.pip:
   #     requirements: /downloader/requirements.txt
       # virtualenv: /downloader/venv
       # virtualenv_python: python3.10.9
-  - name: Install requirements for data download
-    ansible.builtin.pip:
-      name: eodag 
+  # - name: Install requirements for data download
+  #   ansible.builtin.pip:
+  #     name: eodag 
 
-  - name: Install requirements for data download
-    ansible.builtin.pip:
-      name: ruamel.yaml 
+  # - name: Install requirements for data download
+  #   ansible.builtin.pip:
+  #     name: ruamel.yaml 
 
   # - name: Printing variable valus
   #   ansible.builtin.debug:
@@ -55,11 +56,11 @@
   #   args:
   #     executable: python3
   - name: Download data
-    ansible.builtin.command: python3 /downloader/downloader.py "{{ downloading_input[0] }}"
+    ansible.builtin.command: /downloader/venv/bin/python3 /downloader/repo/downloader.py "{{ downloading_input[0] }}"
 
   - name: Moving image files from downloading folder to the final path 
     ansible.builtin.shell:
-      cmd: mv "/downloader/{{ downloading_input[0]["saving_settings"]["base_path"] }}" /jupyter-mounts/shared/
+      cmd: mv "/downloader/repo/{{ downloading_input[0]["saving_settings"]["base_path"] }}" /jupyter-mounts/shared/
       chdir: /
 
   

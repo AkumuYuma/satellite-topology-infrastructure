@@ -109,7 +109,7 @@ node_types:
             # input playbook 
             role_name: { get_property: [ SELF, role_name ] } 
             downloading_input: { get_property: [ SELF, downloading_input ] }
-            conda_downloader: 
+            conda_downloader: https://raw.githubusercontent.com/AkumuYuma/satellite-topology-infrastructure/main/artifacts/download_and_init_conda.sh
 
             # Input del ruolo DODAS-TS/ansible-role-jupyterhub
             install_docker: { get_property: [SELF, install_docker] }
